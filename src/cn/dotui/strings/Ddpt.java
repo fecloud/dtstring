@@ -36,7 +36,8 @@ public final class Ddpt {
 		this.className = className;
 		this.outputStream = outputStream;
 		try {
-			key = UUID.randomUUID().toString().getBytes("UTF-8");
+			key = UUID.randomUUID().toString().substring(0, 8)
+					.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
@@ -101,7 +102,7 @@ public final class Ddpt {
 				writeln(String.format(
 						"    public static final String %s = \"%s\";",
 						dtString.getKey(),
-						AESUtil.encrypt(dtString.getValue(), key)));
+						DESUtil.encrypt(dtString.getValue(), key)));
 			}
 
 			writeln("");
@@ -201,7 +202,7 @@ public final class Ddpt {
 	private String getFoot() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("   /**").append(line_separator);
-		builder.append("    * Description 根据键值进行解密").append(line_separator);
+		builder.append("    * 根据键值进行解密").append(line_separator);
 		builder.append("    * ").append(line_separator);
 		builder.append("    * @param data").append(line_separator);
 		builder.append("    * @param key").append(line_separator);
@@ -213,28 +214,18 @@ public final class Ddpt {
 				"    private static byte[] decrypt(byte[] data, byte[] password) throws Exception {")
 				.append(line_separator);
 		builder.append(
-				"        javax.crypto.KeyGenerator kgen = javax.crypto.KeyGenerator.getInstance(\"AES\");")
+				"        final java.security.Key key = new javax.crypto.spec.SecretKeySpec(password, \"DES\");")
 				.append(line_separator);
 		builder.append(
-				"        kgen.init(128, new java.security.SecureRandom(password));")
-				.append(line_separator);
-		builder.append(
-				"        javax.crypto.SecretKey secretKey = kgen.generateKey();")
-				.append(line_separator);
-		builder.append(
-				"        final byte[] enCodeFormat = secretKey.getEncoded();")
-				.append(line_separator);
-		builder.append(
-				"        javax.crypto.spec.SecretKeySpec key = new javax.crypto.spec.SecretKeySpec(enCodeFormat, \"AES\");")
-				.append(line_separator);
-		builder.append(
-				"        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance(\"AES\");")
+				"        final javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance(\"DES\");")
 				.append(line_separator);
 		builder.append(
 				"        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);")
 				.append(line_separator);
-		builder.append("        return cipher.doFinal(data);").append(
-				line_separator);
+		builder.append(
+				"        return cipher.doFinal(data);")
+				.append(line_separator);
+
 		builder.append("    }").append(line_separator);
 		return builder.toString();
 	}

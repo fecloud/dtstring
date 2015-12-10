@@ -1,20 +1,24 @@
 package cn.dotui.strings;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 
-public class AESUtil {
+public class DESUtil {
 
 	public static void main(String[] args) throws IOException, Exception {
-		byte[] key = { 12, 13 };
+		String time = UUID.randomUUID().toString();
+		time = time.substring(0, 8);
+		System.out.println(time);
+		byte[] key = time.getBytes("UTF-8");
 		String data = "123412341234123";
 		final String string = encrypt(data, key);
 		System.out.println(string);
 		System.out.println(decrypt(string, key));
+		final byte []keyssss = {54,99,102,98,53,100,48,97};
+		System.out.println(decrypt("dNED0KlQRArzJzsMyVGxyA==", keyssss));
 	}
-
-	private final static String AES = "AES";
 
 	/**
 	 * Description 根据键值进行加密
@@ -30,12 +34,14 @@ public class AESUtil {
 			final byte[] bt = encrypt(data.getBytes("UTF-8"), password);
 			return Base64.encodeBase64String(bt);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return "";
 	}
 
 	/**
 	 * base
+	 * 
 	 * @param data
 	 * @param password
 	 * @return
@@ -50,26 +56,22 @@ public class AESUtil {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * 解密字符串
+	 * 
 	 * @param data
 	 * @param password
 	 * @return
-	 
-	public static String getString(String string)  {
-		try {
-			final byte[] buf = Base64.decodeBase64(data);
-			final byte[] bt = decrypt(buf, password);
-			return new String(bt);
-		} catch (Exception e) {
-		}
-		return "";
-	}
-	*/
+	 * 
+	 *         public static String getString(String string) { try { final
+	 *         byte[] buf = Base64.decodeBase64(data); final byte[] bt =
+	 *         decrypt(buf, password); return new String(bt); } catch (Exception
+	 *         e) { } return ""; }
+	 */
 
 	/**
-	 * Description 根据键值进行加密
+	 * 根据键值进行加密
 	 * 
 	 * @param data
 	 * @param key
@@ -79,20 +81,15 @@ public class AESUtil {
 	 */
 	private static byte[] encrypt(byte[] data, byte[] password)
 			throws Exception {
-		javax.crypto.KeyGenerator kgen = javax.crypto.KeyGenerator
-				.getInstance(AES);
-		kgen.init(128, new java.security.SecureRandom(password));
-		javax.crypto.SecretKey secretKey = kgen.generateKey();
-		byte[] enCodeFormat = secretKey.getEncoded();
-		javax.crypto.spec.SecretKeySpec key = new javax.crypto.spec.SecretKeySpec(
-				enCodeFormat, AES);
-		javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance(AES);// 创建密码器
-		cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);// 初始化
+		final java.security.Key key = new javax.crypto.spec.SecretKeySpec(
+				password, "DES");
+		final javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("DES");
+		cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
 		return cipher.doFinal(data);
 	}
 
 	/**
-	 * Description 根据键值进行解密
+	 * 根据键值进行解密
 	 * 
 	 * @param data
 	 * @param key
@@ -102,15 +99,11 @@ public class AESUtil {
 	 */
 	private static byte[] decrypt(byte[] data, byte[] password)
 			throws Exception {
-		javax.crypto.KeyGenerator kgen = javax.crypto.KeyGenerator
-				.getInstance(AES);
-		kgen.init(128, new java.security.SecureRandom(password));
-		javax.crypto.SecretKey secretKey = kgen.generateKey();
-		byte[] enCodeFormat = secretKey.getEncoded();
-		javax.crypto.spec.SecretKeySpec key = new javax.crypto.spec.SecretKeySpec(
-				enCodeFormat, AES);
-		javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance(AES);// 创建密码器
-		cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);// 初始化
+		final java.security.Key key = new javax.crypto.spec.SecretKeySpec(
+				password, "DES");
+		final javax.crypto.Cipher cipher = javax.crypto.Cipher
+				.getInstance("DES");
+		cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);
 
 		return cipher.doFinal(data);
 	}
