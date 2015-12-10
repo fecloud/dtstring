@@ -1,0 +1,5 @@
+设置ant 方法如下：
+
+1.<taskdef name="ddpt" classpath="XXX.jar" classname=" cn.dotui.strings.ant.AntDtString"/>
+
+2.<ddpt src="${xx}" srclz="${xx}" dest="${xx}" destlz="${xx}" />
